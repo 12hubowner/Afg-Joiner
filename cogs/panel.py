@@ -15,6 +15,10 @@ def is_owner():
         return True
     return app_commands.check(predicate)
 
+# ==========================================
+# UI COMPONENTS
+# ==========================================
+
 class RedeemModal(discord.ui.Modal, title="Redeem a key"):
     key_input = discord.ui.TextInput(
         label="Enter script key below:", 
@@ -57,10 +61,10 @@ class PanelView(discord.ui.View):
         if row["auth_expire"] and int(time.time()) >= row["auth_expire"]: 
             return await interaction.response.send_message("❌ Your key has expired.", ephemeral=True)
 
-        # MAKE SURE THIS IS YOUR RAILWAY URL
+        # UPDATED RAILWAY URL
         loadstring_payload = (
             f'script_key = "{row["key"]}"\n'
-            f'loadstring(game:HttpGet("https://afg-joiner.up.railway.app/loader"))()'
+            f'loadstring(game:HttpGet("https://afg-joiner-production.up.railway.app/loader"))()'
         )
         
         try:
@@ -120,6 +124,10 @@ class PanelView(discord.ui.View):
         embed.add_field(name="HWID", value=hwid_status)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
+# ==========================================
+# COMMANDS
+# ==========================================
+
 class Panel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -159,8 +167,8 @@ class Panel(commands.Cog):
         await db.set_setting("buyer_role_id", str(manager_role.id))
 
         embed = discord.Embed(
-            title="Afg Joiner Control Panel", 
-            description="This control panel is for the project: **Afg Joiner**\nIf you're a buyer, click on the buttons below to redeem your key, get the script or get your role", 
+            title="GreenDuels Control Panel", 
+            description="This control panel is for the project: **GreenDuels**\nIf you're a buyer, click on the buttons below to redeem your key, get the script or get your role", 
             color=discord.Color.from_rgb(240, 160, 0)
         )
         embed.set_footer(text=f"Sent by {interaction.user.display_name}")
