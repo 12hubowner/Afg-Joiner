@@ -1,8 +1,10 @@
+-- keyhub loader — paste into Delta Executor
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-local API_URL = "https://afg-joiner.up.railway.app/load"
+-- UPDATED RAILWAY URL
+local API_URL = "https://afg-joiner-production.up.railway.app/load"
 local API_SECRET = "keyhub_9f3a8c7e2b1d4056_do_not_share"
 
 local function get_hwid()
@@ -28,18 +30,33 @@ local function http_post(url, body)
 end
 
 local hwid = get_hwid()
+
 local res, err = http_post(API_URL, {
     secret = API_SECRET,
     key = script_key or "",
     hwid = hwid,
 })
 
-if not res then warn("[keyhub] network error: " .. tostring(err)) return end
+if not res then
+    warn("[keyhub] network error: " .. tostring(err))
+    return
+end
 
 local ok, data = pcall(function() return HttpService:JSONDecode(res.Body) end)
-if not ok or not data then warn("[keyhub] bad response") return end
-if not data.ok then warn("[keyhub] auth failed: " .. tostring(data.error)) return end
+if not ok or not data then
+    warn("[keyhub] bad response")
+    return
+end
+
+if not data.ok then
+    warn("[keyhub] auth failed: " .. tostring(data.error))
+    return
+end
 
 local chunk, load_err = loadstring(data.script)
-if not chunk then warn("[keyhub] script load failed: " .. tostring(load_err)) return end
+if not chunk then
+    warn("[keyhub] script load failed: " .. tostring(load_err))
+    return
+end
+
 chunk()
